@@ -44,11 +44,12 @@ public class PostControllers {
         return new ResponseEntity<>(postServices.createPost(postDto), HttpStatus.NOT_FOUND);
     }
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<PostDto> updatePostsById(@Valid @RequestBody PostDto postDto,@PathVariable(name = "id") int id){
         return new ResponseEntity<>(postServices.updatePostsById(postDto,id),HttpStatus.OK);
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deletePostsById(@PathVariable(name = "id") int id){
         postServices.deletePostsById(id);
