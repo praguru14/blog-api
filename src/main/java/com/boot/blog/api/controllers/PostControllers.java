@@ -20,6 +20,10 @@ public class PostControllers {
     public ResponseEntity<List<PostDto>> getPosts(){
     return new ResponseEntity<>(postServices.getPosts(),HttpStatus.OK);
     }
+    @GetMapping("/{id}")
+    public ResponseEntity<PostDto> getPostsById(@PathVariable(name = "id") int id){
+        return new ResponseEntity<>(postServices.getPostsById(id),HttpStatus.OK);
+    }
 
     @PostMapping("/")
     public ResponseEntity<PostDto> createPost(@RequestBody PostDto postDto){
@@ -31,4 +35,15 @@ public class PostControllers {
         return new ResponseEntity<>(postServices.createPost(postDto), HttpStatus.NOT_FOUND);
     }
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<PostDto> updatePostsById(@RequestBody PostDto postDto,@PathVariable(name = "id") int id){
+        return new ResponseEntity<>(postServices.updatePostsById(postDto,id),HttpStatus.OK);
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deletePostsById(@PathVariable(name = "id") int id){
+        postServices.deletePostsById(id);
+        return new ResponseEntity<>("Post entity deleted successfully",HttpStatus.OK);
+    }
+
 }

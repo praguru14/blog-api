@@ -22,6 +22,12 @@ public class PostServicesImpl implements PostServices {
     }
 
     @Override
+    public PostDto getPostsById(int id) {
+        PostModel post = postRepository.findById(id).orElse(null);
+        return mapToDto(post);
+    }
+
+    @Override
     public PostDto createPost(PostDto postDto) {
 
         //Convert Dto to entity
@@ -33,6 +39,22 @@ public class PostServicesImpl implements PostServices {
         //PostDto is our Dto
         PostDto postResponse = mapToDto(newPost);
         return postResponse;
+    }
+
+    @Override
+    public PostDto updatePostsById(PostDto postDto, int id) {
+        PostModel post = postRepository.findById(id).orElse(null);
+        post.setDescription(postDto.getDescription());
+        post.setContent(postDto.getContent());
+        post.setTitle(postDto.getTitle());
+        PostModel updated = postRepository.save(post);
+        return mapToDto(updated);
+    }
+
+    @Override
+    public void deletePostsById(int id) {
+        PostModel post = postRepository.findById(id).orElse(null);
+        postRepository.delete(post);
     }
 
     private PostDto mapToDto(PostModel postModel){
