@@ -4,6 +4,7 @@ import com.boot.blog.api.models.PostModel;
 import com.boot.blog.api.payload.PostDto;
 import com.boot.blog.api.payload.PostResponse;
 import com.boot.blog.api.repository.PostRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +20,9 @@ public class PostServicesImpl implements PostServices {
 
     @Autowired
     private PostRepository postRepository;
+
+    @Autowired
+    private ModelMapper modelMapper;
 
     @Override
     public PostResponse getPosts(int pageNo, int pageSize, String sortBy, String sortDir) {
@@ -66,6 +70,7 @@ public class PostServicesImpl implements PostServices {
     @Override
     public PostDto updatePostsById(PostDto postDto, int id) {
         PostModel post = postRepository.findById(id).orElse(null);
+        post.setId(postDto.getId());
         post.setDescription(postDto.getDescription());
         post.setContent(postDto.getContent());
         post.setTitle(postDto.getTitle());
@@ -80,18 +85,18 @@ public class PostServicesImpl implements PostServices {
     }
 
     private PostDto mapToDto(PostModel postModel){
-        PostDto postResponse = new PostDto();
-        postResponse.setId(postModel.getId());
-        postResponse.setTitle(postModel.getTitle());
-        postResponse.setContent(postModel.getContent());
-        postResponse.setDescription(postModel.getDescription());
+        PostDto postResponse = modelMapper.map(postModel,PostDto.class);
+//        postResponse.setId(postModel.getId());
+//        postResponse.setTitle(postModel.getTitle());
+//        postResponse.setContent(postModel.getContent());
+//        postResponse.setDescription(postModel.getDescription());
         return postResponse;
     }
     private PostModel mapToEntity(PostDto postDto){
-        PostModel postModel = new PostModel();
-        postModel.setTitle(postDto.getTitle());
-        postModel.setContent(postDto.getContent());
-        postModel.setDescription(postDto.getDescription());
+        PostModel postModel = modelMapper.map(postDto,PostModel.class);
+//        postModel.setTitle(postDto.getTitle());
+//        postModel.setContent(postDto.getContent());
+//        postModel.setDescription(postDto.getDescription());
         return postModel;
     }
 }
