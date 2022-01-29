@@ -2,8 +2,13 @@ package com.boot.blog.api.services;
 
 import com.boot.blog.api.models.PostModel;
 import com.boot.blog.api.payload.PostDto;
+import com.boot.blog.api.payload.PostResponse;
 import com.boot.blog.api.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,9 +21,26 @@ public class PostServicesImpl implements PostServices {
     private PostRepository postRepository;
 
     @Override
-    public List<PostDto> getPosts() {
-        List<PostModel> lists = postRepository.findAll();
-       return lists.stream().map(list -> mapToDto(list)).collect(Collectors.toList());
+    public PostResponse getPosts(int pageNo, int pageSize, String sortBy, String sortDir) {
+
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() :Sort.by(sortBy).descending();
+
+        //creating pageable instance
+        Pageable page = PageRequest.of(pageNo,pageSize, sort);
+        Page<PostModel> lists = postRepository.findAll(page);
+
+        List<PostModel> pageList = lists.getContent();
+        List<PostDto> data = pageList.stream().map(list -> mapToDto(list)).collect(Collectors.toList());
+
+        PostResponse postResponse = new PostResponse();
+        postResponse.setContent(data);
+        postResponse.setPageNo(lists.getNumber());
+        postResponse.setPageSize(lists.getSize());
+        postResponse.setTotalElements(lists.getTotalElements());
+        postResponse.setTotalPages(lists.getTotalPages());
+        postResponse.setLast(lists.isLast());
+
+        return postResponse;
     }
 
     @Override
